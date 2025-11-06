@@ -12,9 +12,14 @@ namespace Spryker\Zed\MerchantProductDataImport\Business\CombinedMerchantProduct
 use Orm\Zed\Currency\Persistence\SpyCurrencyQuery;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
+use Spryker\Zed\MerchantProductDataImport\Dependency\Facade\MerchantProductDataImportToStoreFacadeInterface;
 
 class AddCurrenciesStep implements DataImportStepInterface
 {
+    public function __construct(protected MerchantProductDataImportToStoreFacadeInterface $storeFacade)
+    {
+    }
+
     /**
      * @var string
      */
@@ -41,7 +46,10 @@ class AddCurrenciesStep implements DataImportStepInterface
     protected function getCurrencyCodeToIdMap(): array
     {
         if (!static::$currencies) {
-            $spyCurrencies = SpyCurrencyQuery::create()->find();
+            $currencyIsoCodes = $this->getAvailableCurrencyIsoCodes();
+            $spyCurrencies = SpyCurrencyQuery::create()
+                ->filterByCode_In($currencyIsoCodes)
+                ->find();
 
             foreach ($spyCurrencies as $spyCurrency) {
                 /** @phpstan-var string $code */
@@ -55,5 +63,21 @@ class AddCurrenciesStep implements DataImportStepInterface
         }
 
         return static::$currencies;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function getAvailableCurrencyIsoCodes(): array
+    {
+        $availableCurrencyIsoCodes = [];
+
+        foreach ($this->storeFacade->getAllStores() as $store) {
+            foreach ($store->getAvailableCurrencyIsoCodes() as $isoCode) {
+                $availableCurrencyIsoCodes[$isoCode] = $isoCode;
+            }
+        }
+
+        return $availableCurrencyIsoCodes;
     }
 }

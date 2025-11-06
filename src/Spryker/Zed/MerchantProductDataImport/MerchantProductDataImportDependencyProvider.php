@@ -52,6 +52,11 @@ class MerchantProductDataImportDependencyProvider extends DataImportDependencyPr
     public const FACADE_PRODUCT_ATTRIBUTE = 'FACADE_PRODUCT_ATTRIBUTE';
 
     /**
+     * @var string
+     */
+    public const FACADE_STOCK = 'FACADE_STOCK';
+
+    /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
      * @return \Spryker\Zed\Kernel\Container
@@ -65,6 +70,7 @@ class MerchantProductDataImportDependencyProvider extends DataImportDependencyPr
         $container = $this->addStoreFacade($container);
         $container = $this->addCurrencyFacade($container);
         $container = $this->addProductAttributeFacade($container);
+        $container = $this->addStockFacade($container);
 
         return $container;
     }
@@ -148,6 +154,15 @@ class MerchantProductDataImportDependencyProvider extends DataImportDependencyPr
     {
         $container->set(static::FACADE_PRODUCT_ATTRIBUTE, function (Container $container) {
             return new MerchantProductDataImportToProductAttributeFacadeBridge($container->getLocator()->productAttribute()->facade());
+        });
+
+        return $container;
+    }
+
+    protected function addStockFacade(Container $container): Container
+    {
+        $container->set(static::FACADE_STOCK, function (Container $container) {
+            return $container->getLocator()->stock()->facade();
         });
 
         return $container;

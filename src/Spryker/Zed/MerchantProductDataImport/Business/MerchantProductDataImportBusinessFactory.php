@@ -68,6 +68,7 @@ use Spryker\Zed\MerchantProductDataImport\Dependency\Facade\MerchantProductDataI
 use Spryker\Zed\MerchantProductDataImport\Dependency\Facade\MerchantProductDataImportToProductAttributeFacadeInterface;
 use Spryker\Zed\MerchantProductDataImport\Dependency\Facade\MerchantProductDataImportToStoreFacadeInterface;
 use Spryker\Zed\MerchantProductDataImport\MerchantProductDataImportDependencyProvider;
+use Spryker\Zed\Stock\Business\StockFacadeInterface;
 
 /**
  * @method \Spryker\Zed\MerchantProductDataImport\MerchantProductDataImportConfig getConfig()
@@ -395,12 +396,13 @@ class MerchantProductDataImportBusinessFactory extends DataImportBusinessFactory
         return new ProductAbstractStoreWriterStep($this->createMerchantCombinedProductRepository());
     }
 
-    /**
-     * @return \Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface
-     */
     public function createMerchantCombinedProductStockWriterStep(): DataImportStepInterface
     {
-        return new MerchantCombinedProductStockWriterStep($this->createMerchantCombinedProductRepository());
+        return new MerchantCombinedProductStockWriterStep(
+            $this->createMerchantCombinedProductRepository(),
+            $this->getStoreFacade(),
+            $this->getStockFacade(),
+        );
     }
 
     /**
@@ -408,7 +410,7 @@ class MerchantProductDataImportBusinessFactory extends DataImportBusinessFactory
      */
     public function createAddCurrenciesStep(): DataImportStepInterface
     {
-        return new AddCurrenciesStep();
+        return new AddCurrenciesStep($this->getStoreFacade());
     }
 
     /**
@@ -566,5 +568,10 @@ class MerchantProductDataImportBusinessFactory extends DataImportBusinessFactory
     public function getProductAttributeFacade(): MerchantProductDataImportToProductAttributeFacadeInterface
     {
         return $this->getProvidedDependency(MerchantProductDataImportDependencyProvider::FACADE_PRODUCT_ATTRIBUTE);
+    }
+
+    public function getStockFacade(): StockFacadeInterface
+    {
+        return $this->getProvidedDependency(MerchantProductDataImportDependencyProvider::FACADE_STOCK);
     }
 }

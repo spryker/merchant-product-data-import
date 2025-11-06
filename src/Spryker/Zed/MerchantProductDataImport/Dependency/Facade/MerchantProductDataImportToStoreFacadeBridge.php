@@ -7,6 +7,8 @@
 
 namespace Spryker\Zed\MerchantProductDataImport\Dependency\Facade;
 
+use Generated\Shared\Transfer\StoreTransfer;
+
 class MerchantProductDataImportToStoreFacadeBridge implements MerchantProductDataImportToStoreFacadeInterface
 {
     /**
@@ -28,5 +30,10 @@ class MerchantProductDataImportToStoreFacadeBridge implements MerchantProductDat
     public function getAllStores(): array
     {
         return $this->storeFacade->getAllStores();
+    }
+
+    public function getStoreByName(string $name): StoreTransfer
+    {
+        return $this->storeFacade->getStoreByName($name);
     }
 }

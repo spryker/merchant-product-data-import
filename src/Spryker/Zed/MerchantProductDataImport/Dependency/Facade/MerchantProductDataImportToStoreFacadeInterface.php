@@ -7,10 +7,14 @@
 
 namespace Spryker\Zed\MerchantProductDataImport\Dependency\Facade;
 
+use Generated\Shared\Transfer\StoreTransfer;
+
 interface MerchantProductDataImportToStoreFacadeInterface
 {
     /**
      * @return list<\Generated\Shared\Transfer\StoreTransfer>
      */
     public function getAllStores(): array;
+
+    public function getStoreByName(string $name): StoreTransfer;
 }

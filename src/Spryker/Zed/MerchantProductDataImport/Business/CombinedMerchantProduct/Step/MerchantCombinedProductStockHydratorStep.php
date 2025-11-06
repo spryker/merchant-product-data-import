@@ -18,26 +18,14 @@ class MerchantCombinedProductStockHydratorStep implements DataImportStepInterfac
 {
     use AssignedProductTypeSupportTrait;
 
-    /**
-     * @var string
-     */
-    public const DATA_PRODUCT_STOCK_TRANSFER = 'DATA_PRODUCT_STOCK_TRANSFER';
+    public const string DATA_PRODUCT_STOCK_TRANSFER = 'DATA_PRODUCT_STOCK_TRANSFER';
 
-    /**
-     * @var bool
-     */
-    protected const DEFAULT_IS_NEVER_OUT_OF_STOCK = false;
+    public const string IS_NEVER_OUT_OF_STOCK = 'DATA_PRODUCT_STOCK_TRANSFER';
 
-    /**
-     * @var int
-     */
-    protected const DEFAULT_STOCK_QUANTITY = 0;
+    protected const bool DEFAULT_IS_NEVER_OUT_OF_STOCK = false;
 
-    /**
-     * @param \Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface $dataSet
-     *
-     * @return void
-     */
+    protected const int DEFAULT_STOCK_QUANTITY = 0;
+
     public function execute(DataSetInterface $dataSet): void
     {
         if (!$this->isAssignedProductTypeSupported($dataSet)) {
@@ -47,26 +35,26 @@ class MerchantCombinedProductStockHydratorStep implements DataImportStepInterfac
         $this->importProductStocks($dataSet);
     }
 
-    /**
-     * @param \Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface $dataSet
-     *
-     * @return void
-     */
     protected function importProductStocks(DataSetInterface $dataSet): void
     {
         $productStocks = $this->getProductStocks($dataSet);
+        $dataSet[static::IS_NEVER_OUT_OF_STOCK] = false;
 
         $productStockTransfers = [];
         foreach ($productStocks as $productStock) {
             $warehouseName = $productStock[MerchantCombinedProductStockExtractorStep::KEY_WAREHOUSE_NAME];
             $idStock = $dataSet[AddMerchantStockStep::KEY_MERCHANT_STOCKS][$warehouseName];
-
+            $isNeverOutOfStock = filter_var($productStock[MerchantCombinedProductStockExtractorStep::KEY_IS_NEVER_OUT_OF_STOCK], FILTER_VALIDATE_BOOLEAN);
             $spyStockProductEntityTransfer = (new SpyStockProductEntityTransfer())
                 ->setFkStock($idStock)
-                ->setIsNeverOutOfStock(filter_var($productStock[MerchantCombinedProductStockExtractorStep::KEY_IS_NEVER_OUT_OF_STOCK], FILTER_VALIDATE_BOOLEAN))
+                ->setIsNeverOutOfStock($isNeverOutOfStock)
                 ->setQuantity((int)$productStock[MerchantCombinedProductStockExtractorStep::KEY_QUANTITY]);
 
             $productStockTransfers[] = $spyStockProductEntityTransfer;
+
+            if ($isNeverOutOfStock) {
+                $dataSet[static::IS_NEVER_OUT_OF_STOCK] = true;
+            }
         }
 
         if (!count($productStockTransfers) && $this->getIsNewProduct($dataSet)) {
@@ -94,8 +82,6 @@ class MerchantCombinedProductStockHydratorStep implements DataImportStepInterfac
     }
 
     /**
-     * @param \Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface $dataSet
-     *
      * @return array<\Generated\Shared\Transfer\SpyStockProductEntityTransfer>
      */
     protected function getProductStocks(DataSetInterface $dataSet): array
@@ -104,8 +90,6 @@ class MerchantCombinedProductStockHydratorStep implements DataImportStepInterfac
     }
 
     /**
-     * @param \Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface $dataSet
-     *
      * @return array<string, int>
      */
     protected function getMerchantStocks(DataSetInterface $dataSet): array
@@ -113,11 +97,6 @@ class MerchantCombinedProductStockHydratorStep implements DataImportStepInterfac
         return $dataSet[AddMerchantStockStep::KEY_MERCHANT_STOCKS];
     }
 
-    /**
-     * @param \Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface $dataSet
-     *
-     * @return bool
-     */
     protected function getIsNewProduct(DataSetInterface $dataSet): bool
     {
         return $dataSet[DefineIsNewProductStep::DATA_KEY_IS_NEW_PRODUCT];

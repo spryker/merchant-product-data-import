@@ -110,11 +110,11 @@ class MerchantCombinedProductRepository implements MerchantCombinedProductReposi
      */
     public function getAbstractSkuByConcreteSku(string $sku): string
     {
-        if (!isset(static::$resolvedAbstractProducts[$sku])) {
+        if (!isset(static::$resolvedProducts[$sku])) {
             $this->resolveProductByConcreteSku($sku);
         }
 
-        return static::$resolvedAbstractProducts[$sku][static::ABSTRACT_SKU];
+        return static::$resolvedProducts[$sku][static::ABSTRACT_SKU];
     }
 
     /**
