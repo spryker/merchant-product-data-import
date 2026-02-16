@@ -42,10 +42,10 @@ class PossibleCsvHeaderExpander implements PossibleCsvHeaderExpanderInterface
     }
 
     /**
-     * @param array<string, list<string>> $possibleCsvHeaders
+     * @param array<string, array<string>> $possibleCsvHeaders
      * @param \Generated\Shared\Transfer\MerchantTransfer $merchantTransfer
      *
-     * @return array<string, list<string>>
+     * @return array<string, array<string>>
      */
     public function expand(array $possibleCsvHeaders, MerchantTransfer $merchantTransfer): array
     {
@@ -94,10 +94,10 @@ class PossibleCsvHeaderExpander implements PossibleCsvHeaderExpanderInterface
     }
 
     /**
-     * @param list<string> $headers
-     * @param array<string, string|list<string>> $replacements
+     * @param array<string> $headers
+     * @param array<string, string|array<string>> $replacements
      *
-     * @return list<string>
+     * @return array<string>
      */
     protected function replacePlaceholders(array $headers, array $replacements): array
     {
@@ -111,9 +111,9 @@ class PossibleCsvHeaderExpander implements PossibleCsvHeaderExpanderInterface
 
     /**
      * @param string $header
-     * @param array<string, string|list<string>> $replacements
+     * @param array<string, string|array<string>> $replacements
      *
-     * @return list<string>
+     * @return array<string>
      */
     protected function expandHeaderPlaceholders(string $header, array $replacements): array
     {
@@ -140,7 +140,7 @@ class PossibleCsvHeaderExpander implements PossibleCsvHeaderExpanderInterface
     /**
      * @param \Generated\Shared\Transfer\MerchantTransfer $merchantTransfer
      *
-     * @return list<string>
+     * @return array<string>
      */
     protected function getMerchantStockNames(MerchantTransfer $merchantTransfer): array
     {
@@ -172,7 +172,7 @@ class PossibleCsvHeaderExpander implements PossibleCsvHeaderExpanderInterface
     /**
      * @param list<int> $storeIds
      *
-     * @return list<string>
+     * @return array<string>
      */
     protected function getCurrencyCodes(array $storeIds): array
     {
@@ -192,7 +192,7 @@ class PossibleCsvHeaderExpander implements PossibleCsvHeaderExpanderInterface
     }
 
     /**
-     * @return list<string>
+     * @return array<string>
      */
     protected function getAttributeKeys(): array
     {

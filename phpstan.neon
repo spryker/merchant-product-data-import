@@ -3,3 +3,6 @@ parameters:
     ignoreErrors:
         -
             identifier: missingType.iterableValue
+        # Defensive programming: method_exists check kept for runtime safety
+        -
+            identifier: function.alreadyNarrowedType

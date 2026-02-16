@@ -23,7 +23,7 @@ class MerchantProductDataImportToProductAttributeFacadeBridge implements Merchan
     }
 
     /**
-     * @return list<\Generated\Shared\Transfer\ProductManagementAttributeTransfer>
+     * @return array<\Generated\Shared\Transfer\ProductManagementAttributeTransfer>
      */
     public function getProductAttributeCollection(): array
     {
